@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Services\TodoService;
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class TodoController extends Controller
@@ -57,7 +56,7 @@ class TodoController extends Controller
 
         try {
             $result['data'] = $this->todoService->getById($id);
-        } catch (ModelNotFoundException $e) {
+        } catch (Exception $e) {
             $result = [
                 'status' => 404,
                 'error' => $e->getMessage()
@@ -65,5 +64,21 @@ class TodoController extends Controller
         }
 
         return response()->json($result, $result['status']);
+    }
+
+    public function deleteTodo($id)
+    {
+        try {
+            $todo = $this->todoService->deleteTodoId($id);
+            return response()->json([
+                'status'    => 200,
+                'message'   => 'Data deleted successfully.',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status'    => 404,
+                'error'     => $e->getMessage(),
+            ]);
+        }
     }
 }

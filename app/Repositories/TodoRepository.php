@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Todo;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Ramsey\Uuid\Builder\FallbackBuilder;
 
 class TodoRepository
@@ -23,12 +22,8 @@ class TodoRepository
 
     public function getById($id)
 	{
-        try {   
-            $todo = Todo::findOrFail($id);
-            return $todo;
-        } catch (ModelNotFoundException) {
-            throw new ModelNotFoundException('ID not found');
-        }
+		$todo = $this->todo->findOrFail(['_id'=>$id]);
+		return $todo;
 	}
 
     public function create($data)
@@ -41,5 +36,11 @@ class TodoRepository
 
         $addTodo->save();
         return $addTodo->fresh();
+    }
+
+    public function delete($id)
+    {
+        $todo = $this->todo->destroy($id);
+        return $todo;
     }
 }

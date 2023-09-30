@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Repositories\TodoRepository;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
 use MongoDB\Exception\InvalidArgumentException;
 
@@ -24,12 +23,9 @@ class TodoService
 
     public function getById($todoId)
 	{
-        try {  
-            $todo = $this->todoRepository->getById($todoId);
-            return $todo;
-        } catch (ModelNotFoundException $e) {
-            throw new ModelNotFoundException($e->getMessage());
-        }
+        $todo = $this->todoRepository->getById($todoId);
+        return $todo;
+        
 	}
 
     public function addTodo($data)
@@ -45,5 +41,12 @@ class TodoService
 
         $todoId = $this->todoRepository->create($data);
         return $todoId;
+    }
+
+    public function deleteTodoId($id)
+    {
+        $todoId = $this->todoRepository->getById($id);
+        $todo = $this->todoRepository->delete($todoId);
+        return $todo;
     }
 }
