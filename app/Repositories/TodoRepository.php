@@ -16,7 +16,7 @@ class TodoRepository
 
     public function getAll()
     {
-        $todo = $this->todo->get([]);
+        $todo = $this->todo->get();
         return $todo;
     }
 
@@ -36,6 +36,12 @@ class TodoRepository
 
         $addTodo->save();
         return $addTodo->fresh();
+    }
+
+    public function update($data, $id)
+    {
+        $todo = $this->todo->where(['_id'=>$id])->update($data);
+        return $todo;
     }
 
     public function delete($id)

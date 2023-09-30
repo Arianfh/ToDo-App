@@ -17,8 +17,10 @@ class TodoController extends Controller
 
     public function getTodoList()
     {
+        $result = ['status' => 200];
+
         try {
-            $result = $this->todoService->getAll();
+            $result['data'] = $this->todoService->getAll();
         } catch (Exception $e) {
             $result = [
                 'status' => 500,
@@ -26,7 +28,7 @@ class TodoController extends Controller
             ];
         }
 
-        return response()->json($result);
+        return response()->json($result, $result['status']);
     }
 
     public function createTodo(Request $request)
@@ -66,19 +68,46 @@ class TodoController extends Controller
         return response()->json($result, $result['status']);
     }
 
+    public function updateTodo(Request $request, $id)
+    {
+
+        $data = $request->only([
+            'title',
+            'description',
+            'completed'
+        ]);
+       
+        $result = ['status' => 200];
+
+        try {
+            $this->todoService->updateTodoId($data, $id);
+            $result['data'] = $this->todoService->getById($id);
+        } catch (Exception $e) {
+            $result = [
+                'status' => 404,
+                'error' => $e->getMessage()
+            ];
+        }
+
+        return response()->json($result, $result['status']);
+    }
+
     public function deleteTodo($id)
     {
+        $result = [
+            'status' => 200,
+            'message' => 'Todo deleted successfully'
+        ];
+
         try {
-            $todo = $this->todoService->deleteTodoId($id);
-            return response()->json([
-                'status'    => 200,
-                'message'   => 'Data deleted successfully.',
-            ]);
+            $this->todoService->deleteTodoId($id);
         } catch (Exception $e) {
-            return response()->json([
+            $result = [
                 'status'    => 404,
                 'error'     => $e->getMessage(),
-            ]);
+            ];
         }
+
+        return response()->json($result, $result['status']);
     }
 }

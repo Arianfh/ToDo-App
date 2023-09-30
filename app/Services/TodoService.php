@@ -43,6 +43,22 @@ class TodoService
         return $todoId;
     }
 
+    public function updateTodoId($data, $id)
+    {
+        $validator = Validator::make($data, [
+            'title' => 'string',
+            'description' => 'string',
+            'completed' => 'boolean'
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidArgumentException($validator->errors()->first());
+        }
+        
+        $todo = $this->todoRepository->update($data, $id);   
+        return $todo;
+    }
+
     public function deleteTodoId($id)
     {
         $todoId = $this->todoRepository->getById($id);
